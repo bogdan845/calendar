@@ -1,0 +1,639 @@
+@import "fonts";
+@import "vars";
+
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Kalam";
+    padding: 2%;
+    transition: background-color 0.25s linear;
+
+    &.default {
+        background-color: $light-theme;
+    }
+
+    &.dark {
+        background-color: $dark-theme;
+    }
+}
+
+.calendar {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    transition: 0.25s linear;
+    border-left: 1px solid $light-gray;
+    border-right: 1px solid $light-gray;
+    border-top: 1px solid $light-gray;
+
+    button {
+        border: none;
+        outline: none;
+
+        &:focus, &:hover, &:active {
+            border: none;
+            outline: none;
+        }
+    }
+
+
+    // wrap for month / year and arrows
+    &__nav {
+        padding: 4% 0;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        position: relative;
+    }
+
+
+    // "today" btn
+    &__today {
+        position: absolute;
+        left: 0px;
+        top: 0;
+        padding: 0 4px;
+        cursor: pointer;
+        display: none;
+        color: $light-gray;
+        color: $blue;
+        font-size: 14px;
+        border-right: 1px solid $light-gray;
+        border-bottom: 1px solid $light-gray;
+    }
+
+
+    // month and year
+    &__month {
+        width: 100%;
+        max-width: 185px;
+        text-align: center;
+        color: $light-gray;
+        transition: 0.25s linear;
+    }
+
+
+    // prev / next month buttons
+    &__controllers {
+        font-size: 20px;
+        background-color: transparent;
+        cursor: pointer;
+        color: $light-gray;
+        transition: 0.25s linear;
+    }
+
+
+    // wrap for theme switcher
+    &__switcher-wrap {
+        position: absolute;
+        top: 0px;
+        right: 0;
+    }
+
+
+    // theme label
+    &__theme-label {
+        position: relative;
+        width: 12px;
+        height: 24px;
+        display: inline-block;
+        border-left: 1px solid $dark-theme;
+        border-bottom: 1px solid $dark-theme;
+    }
+
+
+    // theme checkbox
+    &__theme-checkbox {
+        opacity: 0;
+        width: 0;
+        height: 0;
+
+        // change style when checked
+        &:checked + .calendar__theme-slider {
+            background-color: $light-theme;
+
+            &:before {
+                background-color: $dark-theme;
+                top: 50%;
+            }
+        }
+    }
+
+
+    // theme switcher
+    &__theme-slider {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: $dark-theme;
+        transition: 0.25s linear;
+        cursor: pointer;
+
+        &:before {
+            position: absolute;
+            content: "";
+            width: 100%;
+            height: 50%;
+            top: 0;
+            left: 0;
+            background-color: $light-theme;
+            transition: 0.25s linear;
+        }
+    }
+
+
+    // days list
+    &__days {
+        list-style-type: none;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 100%;
+        background-color: rgba(200, 200, 200, 0.3);
+        color: $blue;
+        padding: 0;
+        border-bottom: 1px solid $light-gray;
+    }
+
+
+    // days item
+    &__days-item {
+        width: 14.286%;
+        text-align: right;
+        padding: 3% 10px 3% 0;
+        transition: 0.25s linear;
+    }
+
+
+    // list of month dates block
+    &__month-dates {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+
+    // block for each week in month
+    &__week {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        transition: 0.25s linear;
+
+        &:nth-child(2n + 1) {
+            background-color: #fafafa;
+        }
+    }
+
+
+    // dates: current, prev and next
+    &__dates,
+    &__dates-prev,
+    &__dates-next {
+        width: 14.286%;
+        text-align: center;
+        color: $dark-theme;
+        border-bottom: 1px solid $light-gray;
+        padding: 2% 5px;
+        cursor: pointer;
+        position: relative;
+        transition: 0.25s linear;
+    }
+
+
+    // dates(with events): current, prev and next
+    &__dates.with-events:before,
+    &__dates-prev.with-events:before,
+    &__dates-next.with-events:before {
+        position: absolute;
+        content: "";
+        right: 0;
+        top: 0;
+        width: 12px;
+        height: 12px;
+        border-bottom-left-radius: 100%;
+        background-color: $light-gray;
+    }
+
+
+    // color for dates in prev / next months
+    &__dates-prev, &__dates-next {
+        color: #d7d7d7;
+    }
+
+
+    // color(with events) for dates in prev / next months
+    &__dates-prev.with-events:before,
+    &__dates-next.with-events:before {
+        background-color: #e4e4e4;
+    }
+
+
+    // dates
+    &__dates {
+        position: relative;
+    }
+
+
+    // current date
+    &__dates.current {
+        background: $blue;
+        color: $light-theme;
+    }
+
+
+    // dates hover
+    &__dates:hover {
+        background-color: $blue;
+        color: $light-theme;
+    }
+
+
+    // dates after
+    &__dates:after {
+        content: "";
+        position: absolute;
+        height: 0;
+        width: 0;
+        bottom: 0px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 0px solid;
+        opacity: 0;
+        transition: 0.25s linear;
+    }
+
+    // dates opened
+    &__dates.opened:after {
+        bottom: -20px;
+        opacity: 1;
+        border-bottom: 15px solid $light-gray;
+    }
+
+
+    // note wrap
+    &__notes-wrap {
+        width: 100%;
+        overflow: hidden;
+        transition: 0.25s linear;
+        height: 0;
+        opacity: 0;
+        padding: 0 15px;
+        border: 0px solid transparent;
+        text-align: center;
+        position: relative;
+    }
+
+    // opened note wrap
+    &__notes-wrap.opened {
+        margin-top: 18px;
+        height: 230px;
+        opacity: 1;
+        border-top: 1px solid $light-gray;
+        border-bottom: 1px solid $light-gray;
+        padding-top: 20px;
+        padding-bottom: 20px;
+
+        .calendar__note-input {
+            height: 30px;
+        }
+
+        .calendar__add-note {
+            height: 30px;
+            font-size: 25px;
+        }
+
+        .calendar__add-input {
+            font-size: 16px;
+        }
+
+        .calendar__close-note {
+            font-size: 16px;
+            padding: 2px 4px;
+            height: 20px;
+        }
+
+        .calendar__notes-list {
+            height: 135px;
+        }
+
+        .calendar__remove-note {
+            height: auto;
+        }
+    }
+
+
+    // transition for all elements
+    &__note-input,
+    &__add-note,
+    &__close-note,
+    &__notes-list,
+    &__remove-note {
+        transition: 0.25s linear;
+    }
+
+
+    // input field
+    &__note-input {
+        width: 220px;
+        height: 0;
+        font-size: 16px;
+        vertical-align: bottom;
+        padding: 0 10px;
+        font-family: "Kalam";
+        border: 1px solid $light-gray;
+
+        &:focus,
+        &:active,
+        &:hover {
+            outline: 1px solid $light-gray;
+        }
+
+        // if wrong input (same for both themes)
+        &.err {
+            border: 2px solid #ef4138;
+            background-color: #ef4138;
+            color: $light-theme;
+
+            &::placeholder {
+                color: $light-theme;
+            }
+
+            &:focus, &:active, &:hover {
+                color: $light-theme;
+                outline: red;
+            }
+        }
+    }
+
+
+    // add button
+    &__add-note {
+        width: 30px;
+        height: 0;
+        font-size: 0;
+        background-color: transparent;
+        cursor: pointer;
+        vertical-align: bottom;
+        transition: 0.25s linear;
+        color: $dark-theme;
+        border: 1px solid $light-gray;
+
+        &:hover, &:focus, &:active {
+            color: $blue;
+            outline: none;
+        }
+    }
+
+
+    //  close note btn
+    &__close-note {
+        height: 0;
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 0;
+        font-family: unset;
+        padding: 0;
+        width: 20px;
+        cursor: pointer;
+        transition: 0.25s linear;
+        color: $dark-theme;
+        border-left: 1px solid $light-gray;
+        border-bottom: 1px solid $light-gray;
+
+        &:hover {
+            color: $light-gray;
+        }
+    }
+
+
+    // list of notes
+    &__notes-list {
+        margin: 20px 0 0 0;
+        padding: 0;
+        overflow-y: auto;
+        height: 0;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        color: $dark-theme;
+        list-style: none;
+
+        li {
+            order: 1;
+            margin-bottom: 5px;
+            cursor: pointer;
+            position: relative;
+            padding-right: 30px;
+            padding-left: 22px;
+
+            &:before {
+                content: "";
+                position: absolute;
+                left: 0;
+                width: 12px;
+                height: 12px;
+                top: 4px;
+                border: 1px solid $dark-theme;
+            }
+        }
+
+        // completed
+        li.done {
+            order: 2;
+            text-decoration: line-through;
+            text-decoration-color: $dark-theme;
+
+            &:after {
+                content: "";
+                position: absolute;
+                top: 6px;
+                left: 6px;
+                display: block;
+                width: 2px;
+                height: 7px;
+                border: solid $dark-theme;
+                transform: rotate(45deg);
+                border-width: 0 1px 1px 0;
+            }
+        }
+    }
+
+
+    // remove note
+    &__remove-note {
+        height: 0;
+        cursor: pointer;
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        color: $dark-theme;
+
+        &:hover {
+            color: $light-gray;
+        }
+    }
+
+}
+
+
+/*******************************
+      DARK THEME
+*******************************/
+
+
+.dark {
+
+    &.calendar {
+        background-color: $dark-theme;
+    }
+
+    .calendar {
+        // month/year, prev/next btns for changing month
+        &__month,
+        &__controllers {
+            color: $light-theme;
+        }
+
+
+        // theme label
+        &__theme-label {
+            border-left: 1px solid $light-theme;
+            border-bottom: 1px solid $light-theme;
+        }
+
+        // days item
+        &__days-item {
+            color: $light-theme;
+        }
+
+
+        // color for "even" week block
+        &__week:nth-child(2n + 1) {
+            background-color: #1d1d1d;
+        }
+
+
+        // color fro dates
+        &__dates,
+        &__dates-prev,
+        &__dates-next {
+            color: $blue;
+        }
+
+
+        // color for prev/next dates
+        &__dates-prev,
+        &__dates-next {
+            color: #2d5c70;
+        }
+
+
+        // color for dates with events
+        &__dates-prev.with-events:before,
+        &__dates-next.with-events:before {
+            background-color: #2d5c70;
+        }
+
+
+        // color for current/active date
+        &__dates {
+            &.current, &:hover {
+                background-color: rgba(200, 200, 200, 0.3);
+                color: $light-theme;
+            }
+
+            &.opened:after {
+                border-bottom: 15px solid $light-gray;
+            }
+
+            &.with-events:before {
+                background-color: $blue;
+            }
+        }
+
+
+        // opened note wrap
+        &__notes-wrap.opened {
+            border-top: 1px solid $light-gray;
+            border-top: 1px solid $light-gray;
+        }
+
+
+        // input field
+        &__note-input {
+            border: 1px solid $blue;
+
+            &:focus, &:active, &:hover {
+                outline: 1px solid $blue;
+            }
+        }
+
+
+        // add btn
+        &__add-note {
+            color: $light-theme;
+            border: 1px solid $blue;
+
+            &:hover, &:focus, &:active {
+                color: $blue;
+            }
+        }
+
+
+        // close note btn
+        &__close-note {
+            color: $blue;
+            border-left: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+
+            &:hover {
+                color: $light-gray;
+            }
+        }
+
+
+        // list of notes
+        &__notes-list {
+            color: $light-gray;
+
+            li {
+                &:before {
+                    border: 1px solid $light-gray;
+                }
+
+                &.done {
+                    text-decoration-color: $light-gray;
+
+                    &:after {
+                        border-color: $light-gray;
+                    }
+                }
+            }
+        }
+
+
+        // remove note
+        &__remove-note {
+            color: $blue;
+
+            &:hover {
+                color: $light-gray;
+            }
+        }
+    }
+}
