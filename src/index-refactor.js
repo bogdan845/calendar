@@ -36,7 +36,7 @@ let getNotes = JSON.parse(localStorage.getItem("calendarNotes"));
 
 // set local storage for theme
 let setTheme = localStorage.getItem("calendarTheme") ?
-    JSON.parse(localStorage.getItem("calendarTheme")) : {"theme": "default"};
+    JSON.parse(localStorage.getItem("calendarTheme")) : { "theme": "default" };
 localStorage.setItem("calendarTheme", JSON.stringify(setTheme));
 const getTheme = JSON.parse(localStorage.getItem("calendarTheme"));
 
@@ -59,60 +59,49 @@ const getCalendarDatesPrev = document.getElementsByClassName('calendar__dates-pr
 const getCalendarDatesNext = document.getElementsByClassName('calendar__dates-next');
 
 
-//
-// const countDaysInMonth = (year, month) => {
-//     return new Date(year, month, 0).getDate();
-// };
+/*
+* INIT CALENDAR
+**/
+const createCalenadr = new Calendar(
+    getCalendar,
+    getCalendarDates,
+    monthName,
+    date,
+    getTheme,
+    getYear,
+    monthIndex,
+);
 
 
 /*
 * INIT MARK UP
-* */
+**/
 const createMarkup = new CalendarMarkup(
     getCalendar,
     dayName,
-    monthIndex,
     monthName,
-    getYear
 );
-createMarkup.navigationMarkup();
-createMarkup.monthMarkUp(monthName[monthIndex], getYear);
-
-/*
-* INIT CALENDAR
-* */
-const initCalendar = new Calendar(
-    getCalendar,
-    getCalendarDates,
-    monthName,
-    monthIndex,
-    date,
-    getYear,
-    getTheme
-);
-
-// initCalendar.markCurrentDate();
-initCalendar.setCurrentDate();
-initCalendar.displayCurrentMonth();
-initCalendar.setTheme();
-
-
 
 
 /*
 * INIT NOTES
-* */
-const initNotes = new Notes(
+**/
+const createNotes = new Notes(
     getCalendar,
-    getNotes,
-    getYear,
     monthName,
-    monthIndex,
-    getCalendarNotesWrap,
+    getNotes,
     getCalendarDates,
+    getCalendarNotesWrap,
     getCalendarDatesPrev,
     getCalendarDatesNext
 );
+
+createCalenadr.displayCurrentMonth();
+createMarkup.navigationMarkup();
+createMarkup.monthMarkUp();
+createCalenadr.markCurrentDate();
+createNotes.showNotes();
+createCalenadr.setTheme();
 
 
 /*
@@ -120,16 +109,17 @@ const initNotes = new Notes(
 *
 display none when click on "Today" back to current month */
 const getToday = document.getElementById("today");
-getToday.addEventListener('click', (e) => {
+getToday.addEventListener("click", (e) => {
     // set year index adn month index to present
-    initCalendar.getYear = date.getFullYear();
-    initCalendar.monthIndex = date.getMonth();
+    createCalenadr.getYear = date.getFullYear();
+    createCalenadr.monthIndex = date.getMonth();
     e.target.style.display = "none";
 
-    initCalendar.setCurrentDate();
-    createMarkup.monthMarkUp();
-    initCalendar.markCurrentDate();
-    initNotes.showNotes();
+    createCalenadr.displayCurrentMonth();
+    createMarkup.monthMarkUp()
+    createCalenadr.setCurrentDate();
+    createNotes.showNotes();
+    createCalenadr.markCurrentDate();
 });
 
 
@@ -137,12 +127,12 @@ getToday.addEventListener('click', (e) => {
 ** BUTTON PREV
 */
 const getShowPrev = document.getElementById('prevMonth');
-getShowPrev.addEventListener('click', () => {
-    createMarkup.switchMonth();
+getShowPrev.addEventListener("click", () => {
+    createCalenadr.switchMonth();
     createMarkup.monthMarkUp();
-    initNotes.showNotes();
-    initCalendar.markCurrentDate();
-    initCalendar.today(getToday);
+    createCalenadr.markCurrentDate();
+    createNotes.showNotes();
+    createCalenadr.today(getToday);
 });
 
 
@@ -150,12 +140,12 @@ getShowPrev.addEventListener('click', () => {
 ** BUTTON NEXT
 */
 const getShowNext = document.getElementById('nextMonth');
-getShowNext.addEventListener('click', () => {
-    createMarkup.switchMonth('next' );
+getShowNext.addEventListener("click", () => {
+    createCalenadr.switchMonth("next");
     createMarkup.monthMarkUp();
-    initNotes.showNotes();
-    initCalendar.markCurrentDate();
-    initCalendar.today(getToday);
+    createCalenadr.markCurrentDate();
+    createNotes.showNotes();
+    createCalenadr.today(getToday);
 });
 
 
@@ -163,8 +153,8 @@ getShowNext.addEventListener('click', () => {
 ** THEME BTN
 */
 const getThemeBtn = document.getElementById('theme');
-getThemeBtn.addEventListener('click', () => {
-    initCalendar.changeTheme();
+getThemeBtn.addEventListener("click", () => {
+    createCalenadr.changeTheme();
 });
 
 
@@ -172,37 +162,36 @@ getThemeBtn.addEventListener('click', () => {
 ** CLICK EVENT FOR DATES
 */
 const getListDates = document.getElementById("dates");
-getListDates.addEventListener('click', (e) => {
+getListDates.addEventListener("click", (e) => {
 
     // open notes for selected date
-    initNotes.openCloseNote(e.target);
+    createNotes.openCloseNote(e.target);
 
     // output notes and set localstorage
-    initNotes.addNotes(e.target);
+    createNotes.addNotes(e.target);
 
     // remove note
-    initNotes.removeNote(e.target);
+    createNotes.removeNote(e.target);
 
     // change note status
-    initNotes.noteStatus(e.target);
+    createNotes.noteStatus(e.target);
 
     // close notes
-    initNotes.closeNoteBtn(e.target);
+    createNotes.closeNoteBtn(e.target);
 
     // switch month when click on dates from prev / next month
     if (e.target.classList.contains("calendar__dates-prev")) {
-        createMarkup.switchMonth();
+        createCalenadr.switchMonth();
         createMarkup.monthMarkUp();
-        initCalendar.markCurrentDate();
-        initNotes.showNotes();
-        initCalendar.today(getToday);
-    } else if (e.target.classList.contains("calendar__dates-next")) {
-        createMarkup.switchMonth("next");
+        createCalenadr.markCurrentDate();
+        createNotes.showNotes();
+        createCalenadr.today(getToday);
+    }
+    if (e.target.classList.contains("calendar__dates-next")) {
+        createCalenadr.switchMonth("next");
         createMarkup.monthMarkUp();
-        initCalendar.markCurrentDate();
-        initNotes.showNotes();
-        initCalendar.today(getToday);
-    } else {
+        createCalenadr.markCurrentDate();
+        createNotes.showNotes();
+        createCalenadr.today(getToday);
     }
 });
-

@@ -1,20 +1,34 @@
+import { takeWhile } from "lodash";
+
 class Calendar {
     constructor(
         getCalendar,
         getCalendarDates,
         monthName,
-        monthIndex,
         date,
-        getYear,
         getTheme,
+        getYear,
+        monthIndex,
     ) {
         this.getCalendar = getCalendar;
         this.getCalendarDates = getCalendarDates;
         this.monthName = monthName;
-        this.monthIndex = monthIndex;
-        this.date = date;
-        this.getYear = getYear;
         this.getTheme = getTheme;
+        this.date = date;
+        this.monthIndex = monthIndex;
+        this.getYear = getYear;
+    }
+
+
+    /**
+    * Get year and index of month
+    **/
+    monthYear(key) {
+        const monthYear = {
+            "monthIndex": this.getCalendar.getAttribute("data-month"),
+            "yearIndex": this.getCalendar.getAttribute("data-year")
+        }
+        return monthYear[key];
     }
 
 
@@ -22,8 +36,14 @@ class Calendar {
      * Set current date
      * */
     setCurrentDate() {
-        this.getCalendar.setAttribute("data-month", this.monthName[this.monthIndex]);
-        this.getCalendar.setAttribute("data-year", this.getYear);
+        this.getCalendar.setAttribute(
+            "data-month",
+            this.monthIndex
+        );
+        this.getCalendar.setAttribute(
+            "data-year",
+            this.getYear
+        );
     }
 
 
@@ -36,14 +56,13 @@ class Calendar {
         if (this.monthIndex < 0) {
             this.monthIndex = 11;
             this.getYear--;
-        } else {
         }
 
         if (this.monthIndex > 11) {
             this.monthIndex = 0;
             this.getYear++;
-        } else {
         }
+
         this.setCurrentDate();
     }
 
@@ -64,7 +83,7 @@ class Calendar {
 
     /**
      * Switch theme
-     * * */
+     */
     changeTheme() {
         this.getCalendar.getAttribute("data-theme") === "dark" ?
             this.getCalendar.setAttribute("data-theme", "default") :
@@ -91,10 +110,10 @@ class Calendar {
      * Mark current date
      * */
     markCurrentDate() {
-        const calendarMonth = this.getCalendar.getAttribute("data-month");
+        const calendarMonth = Number(this.getCalendar.getAttribute("data-month"));
         const calendarYear = Number(this.getCalendar.getAttribute("data-year"));
 
-        if (calendarMonth === this.monthName[this.date.getMonth()] &&
+        if (this.monthName[calendarMonth] === this.monthName[this.date.getMonth()] &&
             calendarYear === this.date.getFullYear()
         ) {
             this.getCalendarDates[this.date.getDate() - 1].classList.add("current");
@@ -108,7 +127,6 @@ class Calendar {
     displayCurrentMonth() {
         this.monthIndex++;
         this.switchMonth();
-        this.markCurrentDate()
     }
 }
 

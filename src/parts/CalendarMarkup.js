@@ -9,22 +9,15 @@ class CalendarMarkup extends Calendar {
     constructor(
         getCalendar,
         dayName,
-        monthIndex,
         monthName,
-        getYear,
     ) {
         super(
             getCalendar,
             monthName,
-            monthIndex,
-            getYear
         )
         this.getCalendar = getCalendar;
         this.dayName = dayName;
         this.monthName = monthName;
-        this.monthIndex = monthIndex;
-        this.getYear = getYear;
-
     }
 
     countDaysInMonth = (year, month) => {
@@ -118,6 +111,10 @@ class CalendarMarkup extends Calendar {
      ** Month markup
      */
     monthMarkUp() {
+
+        let monthIndex = Number(super.monthYear("monthIndex"));
+        let yearIndex = Number(super.monthYear("yearIndex"));
+
         /* for elements from main markup method */
         // displaying year and month
         const getMonthAndYear = document.getElementById('currentMonth');
@@ -136,20 +133,27 @@ class CalendarMarkup extends Calendar {
         The index will be checked and will display the correct months
         PS: if countDaysInMonth = 1 it will be January
             if monthIndex = 0 it will be january */
-        const getDaysInCurrentMonth = this.countDaysInMonth(this.getYear, this.monthIndex + 1);
+
+        const getDaysInCurrentMonth = this.countDaysInMonth(
+            yearIndex,
+            monthIndex + 1
+        );
 
         // for prev month. get number of days in previous month
-        const getDaysInPrevMonth = this.countDaysInMonth(this.getYear, this.monthIndex);
+        const getDaysInPrevMonth = this.countDaysInMonth(
+            yearIndex,
+            monthIndex
+        );
 
         // for current month. get the day from which the current month begins
-        const currentStart = new Date(this.getYear, this.monthIndex,).getDay();
+        const currentStart = new Date(yearIndex, monthIndex).getDay();
         // get dates from  previous month to fill gaps before day in which current month start
         let prevMonthDays = getDaysInPrevMonth - currentStart;
         // index for current day
-        let currMonthDays = 0;
+        let currentMonthDays = 0;
 
         // for next month. get the day from which the next month begins
-        const nextStart = new Date(this.getYear, this.monthIndex + 1, 1).getDay();
+        const nextStart = new Date(yearIndex, monthIndex + 1, 1).getDay();
         // fill the gaps from day in which next month start by the end of the week=
         const setNextStart = this.dayName.length - nextStart;
         // index for next month
@@ -159,15 +163,15 @@ class CalendarMarkup extends Calendar {
         getListDates.innerHTML = '';
 
         /* array for ready items.
-        pushing values from prev, current, next months and then output it */
+        pushing values from prev, current, next months and then output */
         let readyItems = [];
 
         // prev month
         this.loopForDays(getDaysInPrevMonth, prevMonthDays, readyItems, "prev");
         // current month
-        this.loopForDays(getDaysInCurrentMonth, currMonthDays, readyItems);
+        this.loopForDays(getDaysInCurrentMonth, currentMonthDays, readyItems);
         // next month
-        if (nextStart !== 0) {
+        if (nextStart != 0) {
             this.loopForDays(setNextStart, nextMonthDays, readyItems, "next");
         } else {
         }
@@ -192,7 +196,8 @@ class CalendarMarkup extends Calendar {
 
             // adding dates to each week
             readyItems.slice(i, i + 7).forEach((item) => {
-                getCalendarWeeks[weekIndex].innerHTML += `<div data-date=${item.id} class="${item.itemClass}">${item.date}</div> `;
+                getCalendarWeeks[weekIndex].innerHTML +=
+                    `<div data-date=${item.id} class="${item.itemClass}">${item.date}</div> `;
             });
 
             /* adding notes block to the end of the each week
@@ -208,9 +213,8 @@ class CalendarMarkup extends Calendar {
         }
 
 
-        // display month and year
-        getMonthAndYear.innerHTML = this.monthName[this.monthIndex] + ' / ' + this.getYear;
-        // getMonthAndYear.innerHTML = month + " / " + year;
+        getMonthAndYear.innerHTML = this.monthName[monthIndex] +
+            " / " + this.getCalendar.getAttribute("data-year");
     }
 }
 

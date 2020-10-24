@@ -4,33 +4,27 @@ class Notes extends Calendar {
 
     constructor(
         getCalendar,
-        getNotes,
-        getYear,
         monthName,
-        monthIndex,
-        getCalendarNotesWrap,
+        getNotes,
         getCalendarDates,
-        // getCalendarDatesPrev,
-        // getCalendarDatesNext
+        getCalendarNotesWrap,
+        getCalendarDatesPrev,
+        getCalendarDatesNext
     ) {
         super(
             getCalendar,
-            getNotes,
-            getYear,
             monthName,
-            monthIndex,
             getCalendarDates,
         );
         this.getCalendar = getCalendar;
-        this.getNotes = getNotes;
-        this.getYear = getYear;
         this.monthName = monthName;
-        this.monthIndex = monthIndex;
-        this.getCalendarNotesWrap = getCalendarNotesWrap;
+        this.getNotes = getNotes;
         this.getCalendarDates = getCalendarDates;
-        // this.getCalendarDatesPrev = getCalendarDatesPrev;
-        // this.getCalendarDatesNext = getCalendarDatesNext;
+        this.getCalendarNotesWrap = getCalendarNotesWrap;
+        this.getCalendarDatesPrev = getCalendarDatesPrev;
+        this.getCalendarDatesNext = getCalendarDatesNext;
     }
+
 
     /**
      * Show mark for notes from prev / next months
@@ -67,14 +61,21 @@ class Notes extends Calendar {
         }
     }
 
+
+
+
     /**
      *  Show notes
      * */
     showNotes() {
+        let monthIndex = Number(super.monthYear("monthIndex"));
+        let yearIndex = Number(super.monthYear("yearIndex"));
+
+        // console.log(this.monthName[monthIndex])
         // if year exists in data (getNotes)
-        if (this.getNotes[this.getYear]) {
+        if (this.getNotes[yearIndex]) {
             // for handy usage
-            const dataInMonth = this.getNotes[this.getYear][this.monthName[this.monthIndex]];
+            const dataInMonth = this.getNotes[yearIndex][this.monthName[monthIndex]];
 
             // getting values from dataInMonth
             let getDatesNotes = [];
@@ -92,7 +93,6 @@ class Notes extends Calendar {
                 for (let i = 0; i < maxDaysInMonth; i++) {
                     if (getDatesNotes[i]) {
                         this.getCalendarDates[getDatesNotes[i]].classList.add("with-events");
-                    } else {
                     }
                 }
 
@@ -111,37 +111,36 @@ class Notes extends Calendar {
 
                         // get notes from day if they exists
                         for (let y = 0; y < dataInMonth[dayIndexShow].length; y++) {
-                            createList.innerHTML += `<li class="calendar__notes-item ${dataInMonth[dayIndexShow][y].status}"
-                            data-note-list-item="${y}">${dataInMonth[dayIndexShow][y].content}
-                            <span class="calendar__remove-note far fa-trash-alt"></span></li>`;
+                            createList.innerHTML +=
+                                `<li class="calendar__notes-item ${dataInMonth[dayIndexShow][y].status}"
+                                    data-note-list-item="${y}">${dataInMonth[dayIndexShow][y].content}
+                                <span class="calendar__remove-note far fa-trash-alt"></span></li>`;
                         }
                         outputData[dayIndexShow].append(createList);
                     }
                     dayIndexShow++;
                 }
-            } else {
             }
-        } else {
         }
 
 
         // add mark if prev months dates has events
-        if (this.getNotes[this.getYear] &&
-            this.getNotes[this.getYear][this.monthName[this.monthIndex - 1]]
+        if (this.getNotes[yearIndex] &&
+            this.getNotes[yearIndex][this.monthName[monthIndex - 1]]
         ) {
             this.showPrevNextNotes(
-                this.getNotes[this.getYear][this.monthName[this.monthIndex - 1]],
+                this.getNotes[yearIndex][this.monthName[monthIndex - 1]],
                 this.getCalendarDatesPrev, 25, 30
             );
         } else if (
             /* add mark if last month of previous year has events
             when displaying first month of current year */
-            this.getCalendar.getAttribute("data-month") == this.monthName[0] &&
-            this.getNotes[this.getYear - 1] &&
-            this.getNotes[this.getYear - 1][this.monthName[11]]
+            Number(this.getCalendar.getAttribute("data-month")) === 0 &&
+            this.getNotes[yearIndex - 1] &&
+            this.getNotes[yearIndex - 1][this.monthName[11]]
         ) {
             this.showPrevNextNotes(
-                this.getNotes[this.getYear - 1][this.monthName[11]],
+                this.getNotes[yearIndex - 1][this.monthName[11]],
                 this.getCalendarDatesPrev, 25, 30
             );
         } else {
@@ -149,22 +148,22 @@ class Notes extends Calendar {
 
 
         // add mark if next months dates has events
-        if (this.getNotes[this.getYear] &&
-            this.getNotes[this.getYear][this.monthName[this.monthIndex + 1]]
+        if (this.getNotes[yearIndex] &&
+            this.getNotes[yearIndex][this.monthName[monthIndex + 1]]
         ) {
             this.showPrevNextNotes(
-                this.getNotes[this.getYear][this.monthName[this.monthIndex + 1]],
+                this.getNotes[yearIndex][this.monthName[monthIndex + 1]],
                 this.getCalendarDatesNext, 0, 5
             );
         } else if (
             /* add mark if first month of next year has events
             when displaying last month of current year */
-            this.getCalendar.getAttribute("data-month") == this.monthName[11] &&
-            this.getNotes[this.getYear + 1] &&
-            this.getNotes[this.getYear + 1][this.monthName[0]]
+            Number(this.getCalendar.getAttribute("data-month")) === 11 &&
+            this.getNotes[yearIndex + 1] &&
+            this.getNotes[yearIndex + 1][this.monthName[0]]
         ) {
             this.showPrevNextNotes(
-                this.getNotes[this.getYear + 1][this.monthName[0]],
+                this.getNotes[yearIndex + 1][this.monthName[0]],
                 this.getCalendarDatesNext, 0, 5
             );
         } else {
@@ -215,13 +214,16 @@ class Notes extends Calendar {
     }
 
 
-    /**
+    /**f
      * Change notes status
      */
     noteStatus(target) {
+        let monthIndex = super.monthYear("monthIndex");
+        let yearIndex = super.monthYear("yearIndex");
+
         if (target.classList.contains("calendar__notes-item")) {
             // for handy usage
-            const dataInMonth = this.getNotes[this.getYear][this.monthName[this.monthIndex]];
+            const dataInMonth = this.getNotes[yearIndex][this.monthName[monthIndex]];
 
             // parrent id
             const dayIndexStatus = target.parentNode.id;
@@ -242,6 +244,9 @@ class Notes extends Calendar {
      * Adding notes to markup
      */
     addNotes(target) {
+        let monthIndex = super.monthYear("monthIndex");
+        let yearIndex = super.monthYear("yearIndex");
+
         if (target.classList.contains("calendar__add-note")) {
             /* data attr
             (id from parent node. This is date of the day in month ) */
@@ -300,8 +305,8 @@ class Notes extends Calendar {
             */
             /* check year availability. if year is new
             add year by adding year with empty object */
-            if (!this.getNotes[this.getYear]) {
-                this.getNotes[this.getYear] = {}
+            if (!this.getNotes[yearIndex]) {
+                this.getNotes[yearIndex] = {}
             } else {
             }
 
@@ -311,21 +316,21 @@ class Notes extends Calendar {
                 key = date of the day
                 value = notes in that day
             */
-            if (!this.getNotes[this.getYear][this.monthName[this.monthIndex]]) {
-                this.getNotes[this.getYear][this.monthName[this.monthIndex]] = {[dayIndexAdding]: []};
+            if (!this.getNotes[yearIndex][this.monthName[monthIndex]]) {
+                this.getNotes[yearIndex][this.monthName[monthIndex]] = { [dayIndexAdding]: [] };
             } else {
             }
 
             // get created data from storage (for needed month)
-            const dataInMonth = this.getNotes[this.getYear][this.monthName[this.monthIndex]];
+            const dataInMonth = this.getNotes[yearIndex][this.monthName[monthIndex]];
 
             /* if day is not new, push value from input
             or create array inside for day events and push valeus from input*/
             if (dataInMonth[dayIndexAdding]) {
-                dataInMonth[dayIndexAdding].push({"content": getNotesInput.value, "status": "in-progress"});
+                dataInMonth[dayIndexAdding].push({ "content": getNotesInput.value, "status": "in-progress" });
             } else {
                 dataInMonth[dayIndexAdding] = [];
-                dataInMonth[dayIndexAdding].push({"content": getNotesInput.value, "status": "in-progress"});
+                dataInMonth[dayIndexAdding].push({ "content": getNotesInput.value, "status": "in-progress" });
             }
 
             // clear input value
@@ -342,9 +347,12 @@ class Notes extends Calendar {
      * Remove note
      * */
     removeNote(target) {
+        let monthIndex = super.monthYear("monthIndex");
+        let yearIndex = super.monthYear("yearIndex");
+
         if (target.classList.contains('calendar__remove-note')) {
             // for handy usages
-            const dataInMonth = this.getNotes[this.getYear][this.monthName[this.monthIndex]];
+            const dataInMonth = this.getNotes[yearIndex][this.monthName[monthIndex]];
 
             // get index of note item in localstorage data
             const itemIndexDelete = target.parentNode.getAttribute("data-note-list-item");
@@ -374,20 +382,20 @@ class Notes extends Calendar {
             localStorage.setItem("calendarNotes", JSON.stringify(this.getNotes));
 
             // remove month if its empty
-            if (this.getNotes[this.getYear][this.monthName[this.monthIndex]]) {
-                for (let month in this.getNotes[this.getYear][this.monthName[this.monthIndex]]) {
+            if (this.getNotes[yearIndex][this.monthName[monthIndex]]) {
+                for (let month in this.getNotes[yearIndex][this.monthName[monthIndex]]) {
                     return;
                 }
-                delete this.getNotes[this.getYear][this.monthName[this.monthIndex]];
+                delete this.getNotes[yearIndex][this.monthName[monthIndex]];
             } else {
             }
 
             // check availability of months in year
             const checkMonthsInYear = [];
-            for (let key in this.getNotes[this.getYear]) {
+            for (let key in this.getNotes[yearIndex]) {
                 checkMonthsInYear.push(key);
             }
-            checkMonthsInYear.length > 0 ? '' : delete this.getNotes[this.getYear];
+            checkMonthsInYear.length > 0 ? '' : delete this.getNotes[yearIndex];
 
             // set localstorage if removing month / year
             localStorage.setItem("calendarNotes", JSON.stringify(this.getNotes));
