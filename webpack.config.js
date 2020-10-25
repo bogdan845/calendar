@@ -7,9 +7,8 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsWebpackPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
-const {BundleAnalyzerPlugin} = require("webpack-bundle-analyzer");
 
-/*vars for building project in dev/prod mode */
+/* vars for building project in dev/prod mode */
 const isDev = process.env.NODE_ENV === "development";
 const isProd = !isDev;
 
@@ -18,9 +17,9 @@ const isProd = !isDev;
 // optimization
 const optimization = () => {
     const config = {
-        runtimeChunk: 'single',
+        runtimeChunk: "single",
         splitChunks: {
-            chunks: 'all',
+            chunks: "all",
             maxInitialRequests: Infinity,
             minSize: 0,
             cacheGroups: {
@@ -31,7 +30,7 @@ const optimization = () => {
                         // or node_modules/packageName
                         const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
                         // npm package names are URL-safe, but some servers don't like @ symbols
-                        return `npm.${packageName.replace('@', '')}`;
+                        return `npm.${packageName.replace("@", "")}`;
                     }
                 }
             }
@@ -107,7 +106,7 @@ module.exports = {
     context: path.resolve(__dirname, "src"),
     mode: "development",
     entry: {
-        main: ["@babel/polyfill", "./index-refactor.js", "./index.html"],
+        main: ["@babel/polyfill", "./index.js", "./index.html"],
     },
     output: {
         chunkFilename: filename("js"),
@@ -117,9 +116,9 @@ module.exports = {
     },
     optimization: optimization(),
     resolve: {
-        extensions: [".js", ".json", ".ts", ".jsx"],
+        extensions: [".js"],
         alias: {
-            "@pages": path.resolve(__dirname, "src/pages"),
+            "@parts": path.resolve(__dirname, "src/parts"),
             "@": path.resolve(__dirname, "src")
         },
         modules: ["node_modules"]
@@ -132,7 +131,6 @@ module.exports = {
     devtool: isDev ? "source-map" : false,
     plugins: [
         new HtmlWebpackPlugin({
-            title: "file title",
             template: "./index.html"
         }),
         new CleanWebpackPlugin(),
@@ -160,10 +158,6 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: styleLoader()
-            },
-            {
-                test: /\.less$/,
-                use: styleLoader("less-loader")
             },
             {
                 test: /\.s[ac]ss$/,

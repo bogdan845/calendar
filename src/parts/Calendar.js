@@ -1,4 +1,16 @@
-import { takeWhile } from "lodash";
+/**
+* Parent method that contains main elements / tools for building app
+* Methods:
+*   monthYear;
+*   setCurrentDate;
+*   switchMonth
+*   backToCurrentDate
+*   changeTheme
+*   setTheme
+*   markCurrentDate
+*   displayCurrentMonth
+**/
+
 
 class Calendar {
     constructor(
@@ -22,6 +34,10 @@ class Calendar {
 
     /**
     * Get year and index of month
+    * this method passed to: 
+    *   CalendarMarkup.js and CalendarNotes.js
+    * it's allowing us to get valid year and month 
+    * from #calendar attributes (data-month and data-year)
     **/
     monthYear(key) {
         const monthYear = {
@@ -33,8 +49,8 @@ class Calendar {
 
 
     /**
-     * Set current date
-     * */
+    * Set current date to #calendar (data-month and data-year)
+    **/
     setCurrentDate() {
         this.getCalendar.setAttribute(
             "data-month",
@@ -48,10 +64,10 @@ class Calendar {
 
 
     /**
-     * Switch month (depend on direction)
-     * */
+    * Switch month (depend on direction)
+    **/
     switchMonth(direction) {
-        direction === 'next' ? this.monthIndex++ : this.monthIndex--;
+        direction === "next" ? this.monthIndex++ : this.monthIndex--;
 
         if (this.monthIndex < 0) {
             this.monthIndex = 11;
@@ -68,9 +84,9 @@ class Calendar {
 
 
     /**
-     ** Show / hide "today" (btn for back to current month)
-     */
-    today(item) {
+    ** Show / hide "today" (btn for back to current month)
+    **/
+    backToCurrentDate(item) {
         if (this.getYear === this.date.getFullYear() &&
             this.monthIndex === this.date.getMonth()
         ) {
@@ -82,14 +98,15 @@ class Calendar {
 
 
     /**
-     * Switch theme
-     */
+    * Switch theme
+    **/
     changeTheme() {
         this.getCalendar.getAttribute("data-theme") === "dark" ?
             this.getCalendar.setAttribute("data-theme", "default") :
             this.getCalendar.setAttribute("data-theme", "dark");
-        this.getCalendar.className = 'calendar ' +
-            this.getCalendar.getAttribute('data-theme');
+
+        this.getCalendar.className = "calendar " + this.getCalendar.getAttribute("data-theme");
+
         document.body.className = this.getCalendar.getAttribute('data-theme');
         this.getTheme.theme = this.getCalendar.getAttribute("data-theme");
         localStorage.setItem("calendarTheme", JSON.stringify(this.getTheme));
@@ -97,19 +114,20 @@ class Calendar {
 
 
     /**
-     * Set theme
-     */
+    * Set theme (theme saved in local storage)
+    **/
     setTheme() {
         document.body.className = this.getTheme.theme;
-        this.getCalendar.className = 'calendar ' + this.getTheme.theme;
+        this.getCalendar.className = "calendar " + this.getTheme.theme;
         this.getCalendar.setAttribute("data-theme", this.getTheme.theme);
     }
 
 
     /**
-     * Mark current date
-     * */
+    * Mark current date (highlight current date)
+    **/
     markCurrentDate() {
+        /* actual year and month index taken from parent (Calendar) */
         const calendarMonth = Number(this.getCalendar.getAttribute("data-month"));
         const calendarYear = Number(this.getCalendar.getAttribute("data-year"));
 
@@ -122,8 +140,8 @@ class Calendar {
 
 
     /**
-     * Display current month
-     * */
+    * Display current month when open app
+    **/
     displayCurrentMonth() {
         this.monthIndex++;
         this.switchMonth();
