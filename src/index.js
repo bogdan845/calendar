@@ -1,6 +1,6 @@
 import Calendar from "@parts/Calendar"
 import CalendarMarkup from "@parts/CalendarMarkup";
-import Notes from "@parts/CalendarNotes";
+import CalendarNotes from "@parts/CalendarNotes";
 import "./styles/main.scss";
 
 const dayName = [
@@ -86,7 +86,7 @@ const createMarkup = new CalendarMarkup(
 /**
 * INIT NOTES
 **/
-const createNotes = new Notes(
+const createNotes = new CalendarNotes(
     getCalendar,
     monthName,
     getNotes,
