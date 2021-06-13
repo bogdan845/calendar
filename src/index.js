@@ -1,7 +1,7 @@
 import Calendar from "@parts/Calendar"
 import CalendarMarkup from "@parts/CalendarMarkup";
 import CalendarNotes from "@parts/CalendarNotes";
-import "./styles/main.scss";
+import "./assets/sass/main.scss";
 
 const dayName = [
     "Sunday",
